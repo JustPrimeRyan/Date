@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Question...</title>
+    <title>Track Day Invitation 🏎️</title>
     <style>
         body {
             margin: 0;
@@ -12,121 +12,159 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Race track asphalt aesthetic background */
+            background: radial-gradient(circle, #2b2b2b 0%, #111111 100%);
+            font-family: 'Impact', 'Arial Black', sans-serif;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle track lines in the background */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%; height: 10px;
+            background: repeating-linear-gradient(90deg, #fff, #fff 40px, transparent 40px, transparent 80px);
+            top: 15%; opacity: 0.1;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            width: 100%; height: 10px;
+            background: repeating-linear-gradient(90deg, #fff, #fff 40px, transparent 40px, transparent 80px);
+            bottom: 15%; opacity: 0.1;
         }
 
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(30, 30, 30, 0.95);
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
+            border-radius: 16px;
+            border: 3px solid #ff4757; /* Brake caliper red */
+            box-shadow: 0 0 25px rgba(255, 71, 87, 0.3);
             max-width: 450px;
             width: 90%;
             position: relative;
+            z-index: 5;
         }
 
         h1 {
-            color: #ff477e;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            color: #ffffff;
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-style: italic;
+        }
+
+        .subtitle {
+            color: #ff4757;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            letter-spacing: 4px;
+            font-family: sans-serif;
+            font-weight: bold;
         }
 
         p {
-            color: #4a4a4a;
+            color: #cccccc;
             font-size: 1.2rem;
             margin-bottom: 30px;
-        }
-
-        .gif-container img {
-            max-width: 200px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            font-family: sans-serif;
+            line-height: 1.5;
         }
 
         .btn-group {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            position: relative;
-            min-height: 60px;
+            gap: 25px;
+            min-height: 80px;
+            align-items: center;
         }
 
         .btn {
-            padding: 12px 35px;
-            font-size: 1.1rem;
+            padding: 14px 40px;
+            font-size: 1.2rem;
             font-weight: bold;
             border: none;
-            border-radius: 25px;
+            border-radius: 6px; /* Boxier, aggressive racing look */
             cursor: pointer;
-            transition: transform 0.1s ease, background-color 0.2s;
+            text-transform: uppercase;
+            font-style: italic;
+            transition: transform 0.1s ease;
         }
 
         #yesBtn {
-            background-color: #ff477e;
+            background-color: #2ed573; /* Green light / Go */
             color: white;
-            box-shadow: 0 4px 15px rgba(255, 71, 126, 0.4);
-            z-index: 5;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
         }
 
         #yesBtn:hover {
-            transform: scale(1.1);
-            background-color: #ff5c8a;
+            transform: scale(1.1) skewX(-6deg);
+            background-color: #26af5c;
         }
 
         #noBtn {
-            background-color: #6c757d;
-            color: white;
-            z-index: 10;
-            /* Smooth transitions for driving around */
-            transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-                        top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-                        width 0.2s, height 0.2s, background-color 0.2s;
+            background-color: #333333;
+            color: #888888;
+            border: 2px solid #444444;
+            /* Smooth physics-based interpolation transition */
+            transition: left 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+                        top 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.2s;
         }
 
-        /* Honda Accord Transformation State */
+        /* Honda Accord - Locked inside track boundaries */
         .accord-mode {
             background-image: url('honda.png') !important;
             background-size: contain !important;
             background-repeat: no-repeat !important;
             background-position: center !important;
             background-color: transparent !important;
-            color: transparent !important; /* Hides "No" text */
-            width: 140px;  
-            height: 80px;
+            border: none !important;
+            color: transparent !important; 
+            width: 150px;  
+            height: 85px;
             box-shadow: none !important;
             border-radius: 0 !important;
+            transform: skewX(-10deg); /* Racing lean style */
         }
 
-        /* Success Card Styling */
+        /* Success Card (CEL Triggered) */
         .hidden { display: none !important; }
-        .celebration h1 { color: #2a9d8f; }
+        
+        .cel-light {
+            width: 80px;
+            margin: 0 auto 20px;
+            fill: #ffa500; /* Amber Check Engine Light color */
+            filter: drop-shadow(0 0 8px #ffa500);
+        }
+        
+        .celebration h1 {
+            color: #ffa500; /* Cel amber */
+        }
     </style>
 </head>
 <body>
 
     <div class="container" id="questionCard">
-        <div class="gif-container">
-            <img src="https://media.giphy.com/media/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute GIF">
-        </div>
-        <h1>Hey! 👋</h1>
-        <p>I really enjoy spending time with you. Will you go out on a date with me?</p>
+        <h1>SEND IT?</h1>
+        <div class="subtitle">STAGE 1 INVITATION</div>
+        <p>I really clear my lap times when I'm hanging out with you. Let's line up on the grid for a real date?</p>
         
-        <div class="btn-group" id="btnGroup">
-            <button class="btn" id="yesBtn">Yes!</button>
-            <button class="btn" id="noBtn">No</button>
+        <div class="btn-group">
+            <button class="btn" id="yesBtn">YES (FULL SEND)</button>
+            <button class="btn" id="noBtn">NO</button>
         </div>
     </div>
 
-    <div class="container hidden" id="successCard">
-        <div class="gif-container">
-            <img src="https://media.giphy.com/media/26vUxArWImnSO6bDi/giphy.gif" alt="Success GIF">
-        </div>
-        <h1>Let's go! 🎉</h1>
-        <p>Can't wait. I'll message you details soon!</p>
+    <div class="container hidden celebration" id="successCard">
+        <svg class="cel-light" viewBox="0 0 24 24">
+            <path d="M19,8H17.5V6H16V8H11V5H13V3.5H8V5H10V8H5A2,2 0 0,0 3,10V17A2,2 0 0,0 5,19H7V21H10V19H14V21H17V19H19A2,2 0 0,0 21,17V10A2,2 0 0,0 19,8M19,17H5V10H16V12H17.5V10H19V17Z"/>
+        </svg>
+        <h1>VTEC KICKED IN 🎉</h1>
+        <p>Excellent launch control. Destination locked into the navigation system. I'll text you the coordinates shortly.</p>
     </div>
 
     <script>
@@ -134,20 +172,16 @@
         const noBtn = document.getElementById('noBtn');
         const questionCard = document.getElementById('questionCard');
         const successCard = document.getElementById('successCard');
-        const btnGroup = document.getElementById('btnGroup');
 
         let transformed = false;
         let returnTimer = null;
 
-        // When "Yes" is selected
         yesBtn.addEventListener('click', () => {
             questionCard.classList.add('hidden');
             successCard.classList.remove('hidden');
         });
 
-        // Function to move the car away from the cursor
-        function evadeMouse() {
-            // Clear any active return timers since she is currently interacting with it
+        function trackDayEvade() {
             clearTimeout(returnTimer);
 
             if (!transformed) {
@@ -160,58 +194,54 @@
                 transformed = true;
             }
 
-            // Define strict padding to keep the entire car completely on-screen
-            const padX = 150; // width of car plus safety buffer
-            const padY = 90;  // height of car plus safety buffer
+            // --- UNBREAKABLE VISIBLE BOUNDARIES ---
+            // Car dimensions + pixel padding safety buffer
+            const carWidth = 160; 
+            const carHeight = 95;
 
-            // Math.max and Math.min guarantee coordinates stay inside viewport boundaries
-            const minX = 20;
-            const maxX = window.innerWidth - padX;
-            const minY = 20;
-            const maxY = window.innerHeight - padY;
+            // These limiters guarantee the math NEVER targets a spot off-screen
+            const minX = 30;
+            const maxX = window.innerWidth - carWidth;
+            const minY = 30;
+            const maxY = window.innerHeight - carHeight;
 
-            const newX = Math.random() * (maxX - minX) + minX;
-            const newY = Math.random() * (maxY - minY) + minY;
+            const targetX = Math.random() * (maxX - minX) + minX;
+            const targetY = Math.random() * (maxY - minY) + minY;
 
-            noBtn.style.left = `${newX}px`;
-            noBtn.style.top = `${newY}px`;
+            noBtn.style.left = `${targetX}px`;
+            noBtn.style.top = `${targetY}px`;
 
-            // Start the 5-second countdown to return home
-            startReturnTimer();
+            // Pull over to the shoulder if she idles for 5 seconds
+            startPitStopTimer();
         }
 
-        // Starts a timer that triggers if she doesn't hover over the car for 5 seconds
-        function startReturnTimer() {
+        function startPitStopTimer() {
             returnTimer = setTimeout(() => {
-                resetCarHome();
-            }, 5000); // 5000 milliseconds = 5 seconds
+                pullIntoPits();
+            }, 5000);
         }
 
-        // Drives the car back to the menu card and turns it back into a button
-        function resetCarHome() {
+        function pullIntoPits() {
             if (!transformed) return;
 
-            // Turn off fixed positioning temporary to find exactly where it belongs naturally
+            // Instantly grab target home specs down in the HTML structure
             noBtn.classList.remove('accord-mode');
             noBtn.style.position = 'relative';
             noBtn.style.left = '';
             noBtn.style.top = '';
 
-            // Grab the real home coordinates inside the layout box
-            const homeRect = noBtn.getBoundingClientRect();
+            const pitLaneRect = noBtn.getBoundingClientRect();
 
-            // Re-apply fixed positioning instantly to animate it driving smoothly "home"
+            // Relock to fly back seamlessly 
             noBtn.style.position = 'fixed';
-            noBtn.style.left = `${window.innerWidth / 2}px`; // Temporary mid-point animation trick
+            noBtn.style.left = `${window.innerWidth / 2}px`;
             noBtn.style.top = `${window.innerHeight / 2}px`;
             noBtn.classList.add('accord-mode');
 
-            // Small timeout allows the browser to process coordinates and smoothly slide home
             setTimeout(() => {
-                noBtn.style.left = `${homeRect.left}px`;
-                noBtn.style.top = `${homeRect.top}px`;
+                noBtn.style.left = `${pitLaneRect.left}px`;
+                noBtn.style.top = `${pitLaneRect.top}px`;
 
-                // Once it reaches home, change it back to a standard gray button
                 setTimeout(() => {
                     noBtn.classList.remove('accord-mode');
                     noBtn.style.position = 'relative';
@@ -219,12 +249,12 @@
                     noBtn.style.top = '';
                     noBtn.style.margin = '';
                     transformed = false;
-                }, 300); // Wait for slide animation to finish
-            }, 50);
+                }, 250); 
+            }, 30);
         }
 
-        // Proximity detection triggers
-        noBtn.addEventListener('mouseenter', evadeMouse);
+        // Proximity radar configurations
+        noBtn.addEventListener('mouseenter', trackDayEvade);
 
         document.addEventListener('mousemove', (e) => {
             if (!transformed) return;
@@ -235,16 +265,15 @@
 
             const distance = Math.hypot(e.clientX - carCenterX, e.clientY - carCenterY);
 
-            // Trigger escape run if cursor gets closer than 90 pixels
-            if (distance < 90) {
-                evadeMouse();
+            // If her mouse gets within 110px radius, trigger defensive driving lines
+            if (distance < 110) {
+                trackDayEvade();
             }
         });
 
-        // Mobile touch interaction mapping
         noBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            evadeMouse();
+            trackDayEvade();
         });
     </script>
 </body>
