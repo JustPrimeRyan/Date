@@ -152,7 +152,7 @@
             color: #00b4d8;
         }
 
-        /* --- STAGE 3: FINAL DETAILS STYLING --- */
+        /* --- STAGE 3: INTERACTIVE INPUT & DETAILS --- */
         .details-box {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 14px;
@@ -165,7 +165,8 @@
         .detail-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            align-items: center;
+            padding: 12px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             color: #9cb1c9;
         }
@@ -178,11 +179,48 @@
             color: #ffffff;
         }
 
+        /* Sleek input form styling */
+        .time-input {
+            background: #1f242d;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            width: 180px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .time-input:focus {
+            border-color: #00b4d8;
+        }
+
+        .lock-btn {
+            background-color: #2ecc71;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .lock-btn:hover {
+            background-color: #27ae60;
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
+    <!-- STAGE 1: THE ASK -->
     <div class="container" id="stage1">
         <h1>Let's take a cruise?</h1>
         <div class="subtitle">System Status: Ready</div>
@@ -194,44 +232,43 @@
         </div>
     </div>
 
+    <!-- STAGE 2: SELECT THE ROUTE -->
     <div class="container hidden" id="stage2">
         <h1>Select Your Route</h1>
         <div class="subtitle">Choose an Activity</div>
         <p>Pick whatever sounds best to you:</p>
         
         <div class="option-list">
-            <button class="option-btn" onclick="selectOption('Car Meet 🏎️')">
-                <span class="option-icon">🏎️</span> Car Meet
+            <button class="option-btn" onclick="selectOption('Pizza & Drive-in Cinema 🎬')">
+                <span class="option-icon">🎬</span> Pizza & Drive-in Cinema
             </button>
-            <button class="option-btn" onclick="selectOption('Drag Racing 🚦')">
-                <span class="option-icon">🚦</span> Drag Racing
+            <button class="option-btn" onclick="selectOption('City Drive 🌃')">
+                <span class="option-icon">🌃</span> City Drive
             </button>
-            <button class="option-btn" onclick="selectOption('Pizza & a Movie 🍕')">
-                <span class="option-icon">🍕</span> Pizza & a Movie
+            <button class="option-btn" onclick="selectOption('Drive Somewhere Scenic 🌅')">
+                <span class="option-icon">🌅</span> Drive Somewhere Scenic
             </button>
         </div>
     </div>
 
+    <!-- STAGE 3: CHOOSE TIME & CONFIRM -->
     <div class="container hidden" id="stage3">
-        <h1 style="color: #2ecc71;">Destination Locked!</h1>
-        <div class="subtitle">It's a Plan 🎉</div>
+        <h1 id="finalTitle">Configure Route</h1>
+        <div class="subtitle" id="finalSubtitle">Logistics Terminal</div>
         
         <div class="details-box">
             <div class="detail-item">
                 <span>Selected Route:</span>
-                <strong id="finalActivity">Car Meet</strong>
+                <strong id="finalActivity">Pizza & Drive-in Cinema 🎬</strong>
             </div>
-            <div class="detail-item">
-                <span>Date:</span>
-                <strong>Next Saturday</strong>
-            </div>
-            <div class="detail-item">
-                <span>Time:</span>
-                <strong>7:00 PM</strong>
+            <div class="detail-item" id="inputRow">
+                <span>When are you free?</span>
+                <input type="text" class="time-input" id="userTime" placeholder="e.g., Saturday at 7pm">
             </div>
         </div>
         
-        <p style="margin-bottom: 0; font-size: 1rem;">Screenshotted! I'll pick you up then. See you soon!</p>
+        <button class="lock-btn" id="lockBtn" onclick="lockPlan()">Lock in Details</button>
+        <p id="screenshotText" class="hidden" style="margin-top: 20px; margin-bottom: 0; font-size: 1rem; color: #9cb1c9;">Screenshotted! I'll pick you up then. See you soon!</p>
     </div>
 
     <script>
@@ -241,6 +278,12 @@
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
         const finalActivity = document.getElementById('finalActivity');
+        const userTime = document.getElementById('userTime');
+        const inputRow = document.getElementById('inputRow');
+        const lockBtn = document.getElementById('lockBtn');
+        const finalTitle = document.getElementById('finalTitle');
+        const finalSubtitle = document.getElementById('finalSubtitle');
+        const screenshotText = document.getElementById('screenshotText');
 
         let transformed = false;
         let returnTimer = null;
@@ -256,6 +299,27 @@
             finalActivity.innerText = choice;
             stage2.classList.add('hidden');
             stage3.classList.remove('hidden');
+        }
+
+        // Final Confirm -> Locks layout into static receipt
+        function lockPlan() {
+            const timeValue = userTime.value.trim();
+            if (timeValue === "") {
+                alert("Please enter a time or day you're free!");
+                return;
+            }
+
+            // Transform input field into a solid text item 
+            inputRow.innerHTML = `<span>Scheduled Time:</span><strong>${timeValue}</strong>`;
+            
+            // Adjust headings for success design
+            finalTitle.innerText = "Destination Locked!";
+            finalTitle.style.color = "#2ecc71";
+            finalSubtitle.innerText = "It's a Plan 🎉";
+            
+            // Hide the button and show the screenshot wrap message
+            lockBtn.classList.add('hidden');
+            screenshotText.classList.remove('hidden');
         }
 
         // --- Honda Accord Evading Script ---
