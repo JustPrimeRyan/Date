@@ -62,7 +62,6 @@
             line-height: 1.6;
         }
 
-        /* Standard Buttons */
         .btn-group {
             display: flex;
             justify-content: center;
@@ -99,7 +98,6 @@
                         top 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
         }
 
-        /* Honda Accord Evade Mode */
         .accord-mode {
             background-image: url('honda.png') !important;
             background-size: contain !important;
@@ -114,12 +112,23 @@
             border-radius: 0 !important;
         }
 
-        /* --- STAGE 2: OPTION LIST STYLING --- */
         .option-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
             margin-bottom: 20px;
+            max-height: 320px; /* Limits size and adds scrolling if needed on small mobile screens */
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom scrollbar styling for the option menu */
+        .option-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .option-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 180, 216, 0.3);
+            border-radius: 10px;
         }
 
         .option-btn {
@@ -150,9 +159,13 @@
             padding: 8px;
             border-radius: 10px;
             color: #00b4d8;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 24px;
+            height: 24px;
         }
 
-        /* --- STAGE 3: INTERACTIVE INPUT & DETAILS --- */
         .details-box {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 14px;
@@ -179,7 +192,6 @@
             color: #ffffff;
         }
 
-        /* Sleek input form styling */
         .time-input {
             background: #1f242d;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -242,6 +254,12 @@
             <button class="option-btn" onclick="selectOption('Pizza & Drive-in Cinema 🎬')">
                 <span class="option-icon">🎬</span> Pizza & Drive-in Cinema
             </button>
+            <button class="option-btn" onclick="selectOption('Car Meet 🏎️')">
+                <span class="option-icon">🏎️</span> Car Meet
+            </button>
+            <button class="option-btn" onclick="selectOption('Drag Racing 🚦')">
+                <span class="option-icon">🚦</span> Drag Racing
+            </button>
             <button class="option-btn" onclick="selectOption('City Drive 🌃')">
                 <span class="option-icon">🌃</span> City Drive
             </button>
@@ -288,20 +306,17 @@
         let transformed = false;
         let returnTimer = null;
 
-        // Step 1 -> Step 2
         yesBtn.addEventListener('click', () => {
             stage1.classList.add('hidden');
             stage2.classList.remove('hidden');
         });
 
-        // Step 2 -> Step 3
         function selectOption(choice) {
             finalActivity.innerText = choice;
             stage2.classList.add('hidden');
             stage3.classList.remove('hidden');
         }
 
-        // Final Confirm -> Locks layout into static receipt
         function lockPlan() {
             const timeValue = userTime.value.trim();
             if (timeValue === "") {
@@ -309,15 +324,10 @@
                 return;
             }
 
-            // Transform input field into a solid text item 
             inputRow.innerHTML = `<span>Scheduled Time:</span><strong>${timeValue}</strong>`;
-            
-            // Adjust headings for success design
             finalTitle.innerText = "Destination Locked!";
             finalTitle.style.color = "#2ecc71";
             finalSubtitle.innerText = "It's a Plan 🎉";
-            
-            // Hide the button and show the screenshot wrap message
             lockBtn.classList.add('hidden');
             screenshotText.classList.remove('hidden');
         }
