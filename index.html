@@ -12,7 +12,6 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* Premium garage/car lounge aesthetic (Deep Slate Gray to Charcoal) */
             background: linear-gradient(135deg, #1f242d 0%, #111318 100%);
             font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
@@ -29,9 +28,9 @@
             width: 90%;
             position: relative;
             z-index: 5;
+            transition: all 0.3s ease;
         }
 
-        /* Ambient glowing trim at the top of the card */
         .container::before {
             content: '';
             position: absolute;
@@ -48,7 +47,7 @@
         }
 
         .subtitle {
-            color: #00b4d8; /* Premium interior dash blue */
+            color: #00b4d8;
             font-size: 0.9rem;
             margin-bottom: 25px;
             text-transform: uppercase;
@@ -63,6 +62,7 @@
             line-height: 1.6;
         }
 
+        /* Standard Buttons */
         .btn-group {
             display: flex;
             justify-content: center;
@@ -90,18 +90,16 @@
         #yesBtn:hover {
             transform: scale(1.05);
             background-color: #0096b4;
-            box-shadow: 0 6px 25px rgba(0, 180, 216, 0.4);
         }
 
         #noBtn {
             background-color: #2c3545;
             color: #a5b4fc;
-            /* Ultra-smooth interpolation physics for moving the car */
             transition: left 0.25s cubic-bezier(0.075, 0.82, 0.165, 1), 
                         top 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
         }
 
-        /* Honda Accord State - Zeroed out layout parameters */
+        /* Honda Accord Evade Mode */
         .accord-mode {
             background-image: url('honda.png') !important;
             background-size: contain !important;
@@ -116,23 +114,76 @@
             border-radius: 0 !important;
         }
 
-        /* Success Card Styling */
+        /* --- STAGE 2: OPTION LIST STYLING --- */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #232933;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background-color: #2c3545;
+            border-color: #00b4d8;
+            transform: translateX(5px);
+        }
+
+        .option-icon {
+            font-size: 1.4rem;
+            background: rgba(0, 180, 216, 0.1);
+            padding: 8px;
+            border-radius: 10px;
+            color: #00b4d8;
+        }
+
+        /* --- STAGE 3: FINAL DETAILS STYLING --- */
+        .details-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+            border: 1px dashed rgba(0, 180, 216, 0.3);
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #9cb1c9;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            color: #ffffff;
+        }
+
         .hidden { display: none !important; }
-        
-        .success-icon {
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            display: inline-block;
-        }
-        
-        .celebration h1 {
-            color: #2ecc71;
-        }
     </style>
 </head>
 <body>
 
-    <div class="container" id="questionCard">
+    <div class="container" id="stage1">
         <h1>Let's take a cruise?</h1>
         <div class="subtitle">System Status: Ready</div>
         <p>I always lose track of miles when I'm hanging out with you. Would you want to go on a date with me?</p>
@@ -143,30 +194,74 @@
         </div>
     </div>
 
-    <div class="container hidden celebration" id="successCard">
-        <div class="success-icon">📍</div>
-        <h1>Destination Locked!</h1>
-        <p>Route calculated successfully. I'll text you the coordinates and the pickup time soon.</p>
+    <div class="container hidden" id="stage2">
+        <h1>Select Your Route</h1>
+        <div class="subtitle">Choose an Activity</div>
+        <p>Pick whatever sounds best to you:</p>
+        
+        <div class="option-list">
+            <button class="option-btn" onclick="selectOption('Car Meet 🏎️')">
+                <span class="option-icon">🏎️</span> Car Meet
+            </button>
+            <button class="option-btn" onclick="selectOption('Drag Racing 🚦')">
+                <span class="option-icon">🚦</span> Drag Racing
+            </button>
+            <button class="option-btn" onclick="selectOption('Pizza & a Movie 🍕')">
+                <span class="option-icon">🍕</span> Pizza & a Movie
+            </button>
+        </div>
+    </div>
+
+    <div class="container hidden" id="stage3">
+        <h1 style="color: #2ecc71;">Destination Locked!</h1>
+        <div class="subtitle">It's a Plan 🎉</div>
+        
+        <div class="details-box">
+            <div class="detail-item">
+                <span>Selected Route:</span>
+                <strong id="finalActivity">Car Meet</strong>
+            </div>
+            <div class="detail-item">
+                <span>Date:</span>
+                <strong>Next Saturday</strong>
+            </div>
+            <div class="detail-item">
+                <span>Time:</span>
+                <strong>7:00 PM</strong>
+            </div>
+        </div>
+        
+        <p style="margin-bottom: 0; font-size: 1rem;">Screenshotted! I'll pick you up then. See you soon!</p>
     </div>
 
     <script>
+        const stage1 = document.getElementById('stage1');
+        const stage2 = document.getElementById('stage2');
+        const stage3 = document.getElementById('stage3');
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
-        const questionCard = document.getElementById('questionCard');
-        const successCard = document.getElementById('successCard');
+        const finalActivity = document.getElementById('finalActivity');
 
         let transformed = false;
         let returnTimer = null;
 
+        // Step 1 -> Step 2
         yesBtn.addEventListener('click', () => {
-            questionCard.classList.add('hidden');
-            successCard.classList.remove('hidden');
+            stage1.classList.add('hidden');
+            stage2.classList.remove('hidden');
         });
 
+        // Step 2 -> Step 3
+        function selectOption(choice) {
+            finalActivity.innerText = choice;
+            stage2.classList.add('hidden');
+            stage3.classList.remove('hidden');
+        }
+
+        // --- Honda Accord Evading Script ---
         function evadeMouse() {
             clearTimeout(returnTimer);
 
-            // Turn into the Honda Accord on first approach
             if (!transformed) {
                 const rect = noBtn.getBoundingClientRect();
                 noBtn.style.position = 'fixed';
@@ -177,25 +272,21 @@
                 transformed = true;
             }
 
-            // --- STRICT SCREEN COUNTER MEASURES ---
             const carWidth = 140; 
             const carHeight = 75;
-            const safetyMargin = 25; // Keeps it safely away from edge bezels
+            const safetyMargin = 25;
 
-            // Calculate exact maximum bounds based on real-time screen width/height
             const minX = safetyMargin;
             const maxX = window.innerWidth - carWidth - safetyMargin;
             const minY = safetyMargin;
             const maxY = window.innerHeight - carHeight - safetyMargin;
 
-            // Generate precise coordinates inside the visible frame
             const targetX = Math.random() * (maxX - minX) + minX;
             const targetY = Math.random() * (maxY - minY) + minY;
 
             noBtn.style.left = `${targetX}px`;
             noBtn.style.top = `${targetY}px`;
 
-            // Start 5-second idle countdown to return the button home
             startReturnTimer();
         }
 
@@ -208,7 +299,6 @@
         function resetCarHome() {
             if (!transformed) return;
 
-            // Undo styling structures temporarily to locate standard HTML slot
             noBtn.classList.remove('accord-mode');
             noBtn.style.position = 'relative';
             noBtn.style.left = '';
@@ -216,7 +306,6 @@
 
             const originalSlot = noBtn.getBoundingClientRect();
 
-            // Reactivate properties to handle the glide home animation smoothly
             noBtn.style.position = 'fixed';
             noBtn.style.left = `${window.innerWidth / 2}px`;
             noBtn.style.top = `${window.innerHeight / 2}px`;
@@ -237,7 +326,6 @@
             }, 30);
         }
 
-        // Proximity detection listeners
         noBtn.addEventListener('mouseenter', evadeMouse);
 
         document.addEventListener('mousemove', (e) => {
@@ -249,7 +337,6 @@
 
             const distance = Math.hypot(e.clientX - carCenterX, e.clientY - carCenterY);
 
-            // Checks if pointer enters a clean 100px bubble around the car frame
             if (distance < 100) {
                 evadeMouse();
             }
