@@ -81,10 +81,10 @@
             background-color: #6c757d;
             color: white;
             z-index: 10;
-            /* Smooth transitions for moving around the screen */
-            transition: left 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                        top 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                        background-color 0.2s;
+            /* Smooth transitions for driving around */
+            transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        width 0.2s, height 0.2s, background-color 0.2s;
         }
 
         /* Honda Accord Transformation State */
@@ -94,7 +94,7 @@
             background-repeat: no-repeat !important;
             background-position: center !important;
             background-color: transparent !important;
-            color: transparent !important; /* Hides the text "No" */
+            color: transparent !important; /* Hides "No" text */
             width: 140px;  
             height: 80px;
             box-shadow: none !important;
@@ -115,7 +115,7 @@
         <h1>Hey! 👋</h1>
         <p>I really enjoy spending time with you. Will you go out on a date with me?</p>
         
-        <div class="btn-group">
+        <div class="btn-group" id="btnGroup">
             <button class="btn" id="yesBtn">Yes!</button>
             <button class="btn" id="noBtn">No</button>
         </div>
@@ -134,8 +134,10 @@
         const noBtn = document.getElementById('noBtn');
         const questionCard = document.getElementById('questionCard');
         const successCard = document.getElementById('successCard');
+        const btnGroup = document.getElementById('btnGroup');
 
         let transformed = false;
+        let returnTimer = null;
 
         // When "Yes" is selected
         yesBtn.addEventListener('click', () => {
@@ -144,8 +146,10 @@
         });
 
         // Function to move the car away from the cursor
-        function evadeMouse(e) {
-            // Turn it into the Honda Accord on the very first proximity detection
+        function evadeMouse() {
+            // Clear any active return timers since she is currently interacting with it
+            clearTimeout(returnTimer);
+
             if (!transformed) {
                 const rect = noBtn.getBoundingClientRect();
                 noBtn.style.position = 'fixed';
@@ -156,42 +160,91 @@
                 transformed = true;
             }
 
-            // Calculate a random new position within the window borders
-            // Keeps the car 100px away from the absolute edges so it doesn't get cut off
-            const padding = 100;
-            const newX = Math.random() * (window.innerWidth - noBtn.offsetWidth - (padding * 2)) + padding;
-            const newY = Math.random() * (window.innerHeight - noBtn.offsetHeight - (padding * 2)) + padding;
+            // Define strict padding to keep the entire car completely on-screen
+            const padX = 150; // width of car plus safety buffer
+            const padY = 90;  // height of car plus safety buffer
 
-            // Apply the new coordinates instantly
+            // Math.max and Math.min guarantee coordinates stay inside viewport boundaries
+            const minX = 20;
+            const maxX = window.innerWidth - padX;
+            const minY = 20;
+            const maxY = window.innerHeight - padY;
+
+            const newX = Math.random() * (maxX - minX) + minX;
+            const newY = Math.random() * (maxY - minY) + minY;
+
             noBtn.style.left = `${newX}px`;
             noBtn.style.top = `${newY}px`;
+
+            // Start the 5-second countdown to return home
+            startReturnTimer();
         }
 
-        // Detects when the cursor enters the button boundary (Desktop)
+        // Starts a timer that triggers if she doesn't hover over the car for 5 seconds
+        function startReturnTimer() {
+            returnTimer = setTimeout(() => {
+                resetCarHome();
+            }, 5000); // 5000 milliseconds = 5 seconds
+        }
+
+        // Drives the car back to the menu card and turns it back into a button
+        function resetCarHome() {
+            if (!transformed) return;
+
+            // Turn off fixed positioning temporary to find exactly where it belongs naturally
+            noBtn.classList.remove('accord-mode');
+            noBtn.style.position = 'relative';
+            noBtn.style.left = '';
+            noBtn.style.top = '';
+
+            // Grab the real home coordinates inside the layout box
+            const homeRect = noBtn.getBoundingClientRect();
+
+            // Re-apply fixed positioning instantly to animate it driving smoothly "home"
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${window.innerWidth / 2}px`; // Temporary mid-point animation trick
+            noBtn.style.top = `${window.innerHeight / 2}px`;
+            noBtn.classList.add('accord-mode');
+
+            // Small timeout allows the browser to process coordinates and smoothly slide home
+            setTimeout(() => {
+                noBtn.style.left = `${homeRect.left}px`;
+                noBtn.style.top = `${homeRect.top}px`;
+
+                // Once it reaches home, change it back to a standard gray button
+                setTimeout(() => {
+                    noBtn.classList.remove('accord-mode');
+                    noBtn.style.position = 'relative';
+                    noBtn.style.left = '';
+                    noBtn.style.top = '';
+                    noBtn.style.margin = '';
+                    transformed = false;
+                }, 300); // Wait for slide animation to finish
+            }, 50);
+        }
+
+        // Proximity detection triggers
         noBtn.addEventListener('mouseenter', evadeMouse);
 
-        // Also tracks general mouse movement across the whole screen.
-        // If her cursor gets within 80 pixels of the car, it will automatically bolt!
         document.addEventListener('mousemove', (e) => {
-            if (!transformed) return; // Only track proximity after it turns into the car
+            if (!transformed) return;
             
             const carRect = noBtn.getBoundingClientRect();
             const carCenterX = carRect.left + (carRect.width / 2);
             const carCenterY = carRect.top + (carRect.height / 2);
 
-            // Calculate distance between cursor and center of the car
             const distance = Math.hypot(e.clientX - carCenterX, e.clientY - carCenterY);
 
-            // Trigger escape if cursor gets too close (80 pixels)
-            if (distance < 80) {
-                evadeMouse(e);
+            // Trigger escape run if cursor gets closer than 90 pixels
+            if (distance < 90) {
+                evadeMouse();
             }
         });
 
-        // Mobile layout override (teleports on finger tap)
+        // Mobile touch interaction mapping
         noBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            evadeMouse(e);
+            evadeMouse();
         });
     </script>
 </body>
