@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Have a Question...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+        }
+
+        h1 {
+            color: #ff477e;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #4a4a4a;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .gif-container img {
+            max-width: 200px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            height: 50px;
+        }
+
+        .btn {
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        #yesBtn {
+            background-color: #ff477e;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 71, 126, 0.4);
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            background-color: #ff5c8a;
+        }
+
+        #noBtn {
+            background-color: #6c757d;
+            color: white;
+            position: absolute;
+            left: 55%;
+        }
+
+        /* Success State */
+        .hidden {
+            display: none;
+        }
+
+        .celebration h1 {
+            color: #2a9d8f;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Invitation Card -->
+    <div class="container" id="questionCard">
+        <div class="gif-container">
+            <!-- You can replace this URL with any cute GIF you like -->
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMms0ZHp3eWhveG10ZW9rbGd3YmptY3h3YmFxb3BqYms1N3A2bW1uOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute GIF">
+        </div>
+        <h1>Hey! 👋</h1>
+        <p>I really enjoy spending time with you. Will you go out on a date with me?</p>
+        
+        <div class="btn-group">
+            <button class="btn" id="yesBtn">Yes!</button>
+            <button class="btn" id="noBtn">No</button>
+        </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div class="container hidden" id="successCard">
+        <div class="gif-container">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbW9pZ29pM3J5NzFpbnVlbXg4b3V4eW90bnd5cm80d2p0ZzI5am9pZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/26vUxArWImnSO6bDi/giphy.gif" alt="Success GIF">
+        </div>
+        <h1>Let's go! 🎉</h1>
+        <p>Can't wait. I'll message you details soon!</p>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const questionCard = document.getElementById('questionCard');
+        const successCard = document.getElementById('successCard');
+
+        // When she clicks Yes
+        yesBtn.addEventListener('click', () => {
+            questionCard.classList.add('hidden');
+            successCard.classList.remove('hidden');
+        });
+
+        // Make the "No" button run away on hover/mouseover
+        noBtn.addEventListener('mouseover', () => {
+            // Get random coordinates within the viewport boundaries
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40);
+            
+            // Switch to fixed positioning so it can fly anywhere on screen
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        });
+
+        // Backup for mobile touch users
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        });
+    </script>
+</body>
+</html>
