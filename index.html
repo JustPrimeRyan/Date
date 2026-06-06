@@ -14,7 +14,7 @@
             min-height: 100vh;
             background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden; /* Stops scrollbars when the car drives off screen */
+            overflow: hidden;
         }
 
         .container {
@@ -84,35 +84,35 @@
             transition: background 0.1s;
         }
 
-        /* Honda Accord State */
+        /* Honda Accord Transformation State */
         .accord-mode {
-            background-image: url('https://i.ibb.co/60m6m98z/image-02ab1b.png') !important;
+            background-image: url('honda.png') !important;
             background-size: contain !important;
             background-repeat: no-repeat !important;
             background-position: center !important;
             background-color: transparent !important;
-            color: transparent !important; /* Hides the word "No" */
-            width: 140px;  /* Fits the car shape nicely */
+            color: transparent !important; /* Hides the text "No" */
+            width: 140px;  
             height: 80px;
             box-shadow: none !important;
             border-radius: 0 !important;
         }
 
-        /* Driving Animation */
+        /* Driving Animation Timeline */
         @keyframes vtecKickIn {
             0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            15% { transform: translate(-15px, 0) scale(1); } /* Slight reverse wind-up */
-            100% { transform: translate(120vw, -20vh) scale(0.6); opacity: 0; } /* Zooms right and off screen */
+            15% { transform: translate(-15px, 0) scale(1); } /* Brief reverse shift */
+            100% { transform: translate(120vw, -20vh) scale(0.6); opacity: 0; } /* Zoom off right */
         }
 
         .driving {
             position: fixed !important;
-            pointer-events: none; /* Can't click it mid-flight */
+            pointer-events: none; 
             z-index: 9999 !important;
             animation: vtecKickIn 1.2s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
         }
 
-        /* Success State */
+        /* Success Card Styling */
         .hidden { display: none !important; }
         .celebration h1 { color: #2a9d8f; }
     </style>
@@ -148,46 +148,46 @@
 
         let isDriving = false;
 
-        // When she clicks Yes
+        // When "Yes" is selected
         yesBtn.addEventListener('click', () => {
             questionCard.classList.add('hidden');
             successCard.classList.remove('hidden');
         });
 
+        // Driving sequence trigger
         function hitTheGas() {
             if (isDriving) return;
             isDriving = true;
 
-            // Lock current position on screen before driving away
+            // Pin button tracking to static viewport geometry before flight
             const rect = noBtn.getBoundingClientRect();
             noBtn.style.position = 'fixed';
             noBtn.style.left = `${rect.left}px`;
             noBtn.style.top = `${rect.top}px`;
             noBtn.style.margin = '0';
 
-            // Transform into the car image and execute animation
             noBtn.classList.add('accord-mode');
             noBtn.classList.add('driving');
 
-            // Reset after it leaves the screen so she can try again if she wants
+            // Handle clean up once animation sequence finishes
             noBtn.addEventListener('animationend', () => {
                 noBtn.classList.remove('driving', 'accord-mode');
                 noBtn.style.position = 'relative';
                 noBtn.style.left = '';
                 noBtn.style.top = '';
-                noBtn.style.display = 'none'; // Hide it temporarily
+                noBtn.style.display = 'none'; 
                 
                 setTimeout(() => {
                     noBtn.style.display = '';
                     isDriving = false;
-                }, 1500); // Reappears back in place after 1.5 seconds
+                }, 1500); // Respawns original layout spot 1.5s later
             }, { once: true });
         }
 
-        // Desktop hover
+        // Desktop interaction map
         noBtn.addEventListener('mouseenter', hitTheGas);
-
-        // Mobile tap
+        
+        // Mobile layout override
         noBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             hitTheGas();
