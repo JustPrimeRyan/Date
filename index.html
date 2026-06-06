@@ -12,21 +12,18 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* Premium dark garage aesthetic */
             background: radial-gradient(circle at center, #242b35 0%, #0f1115 100%);
             font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
             position: relative;
         }
 
-        /* Ambient Tyre Tread Background Accent */
         body::before {
             content: '';
             position: absolute;
             width: 150%;
             height: 150%;
             opacity: 0.03;
-            /* Creates a clean tire tread pattern tiling across the screen */
             background-image: repeating-linear-gradient(45deg, #fff 0px, #fff 10px, transparent 10px, transparent 20px),
                               repeating-linear-gradient(-45deg, #fff 0px, #fff 10px, transparent 10px, transparent 20px);
             pointer-events: none;
@@ -44,10 +41,9 @@
             width: 90%;
             position: relative;
             z-index: 5;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Glowing blue accent trim */
         .container::before {
             content: '';
             position: absolute;
@@ -55,7 +51,6 @@
             background: linear-gradient(90deg, transparent, #00b4d8, transparent);
         }
 
-        /* Decorative Header Flag Component Layout */
         .header-wrap {
             display: flex;
             align-items: center;
@@ -226,7 +221,8 @@
             color: #ffffff;
         }
 
-        .time-input {
+        /* Interactive Dashboard Selectors */
+        .dashboard-picker {
             background: #1f242d;
             border: 1px solid rgba(255, 255, 255, 0.15);
             color: #ffffff;
@@ -234,13 +230,21 @@
             border-radius: 8px;
             font-family: inherit;
             font-size: 0.95rem;
-            width: 180px;
+            width: 160px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
         }
 
-        .time-input:focus {
+        .dashboard-picker:focus {
             border-color: #00b4d8;
+            box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
+        }
+
+        /* Styling for calendar/time native popups icon color adjustments */
+        .dashboard-picker::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
         }
 
         .lock-btn {
@@ -254,11 +258,16 @@
             cursor: pointer;
             width: 100%;
             margin-top: 15px;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
         .lock-btn:hover {
             background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .lock-btn:active {
+            transform: translateY(0);
         }
 
         .hidden { display: none !important; }
@@ -311,7 +320,7 @@
         </div>
     </div>
 
-    <!-- STAGE 3: CHOOSE TIME & CONFIRM -->
+    <!-- STAGE 3: CONFIGURE DATE AND TIME -->
     <div class="container hidden" id="stage3">
         <div class="header-wrap">
             <span class="flag-icon" id="finalFlagL">🔧</span>
@@ -325,14 +334,20 @@
                 <span>Selected Route:</span>
                 <strong id="finalActivity">Pizza & Drive-in Cinema 🎬</strong>
             </div>
-            <div class="detail-item" id="inputRow">
-                <span>When are you free?</span>
-                <input type="text" class="time-input" id="userTime" placeholder="e.g., Saturday at 7pm">
+            <!-- Interactive Date Picker Field -->
+            <div class="detail-item" id="dateRow">
+                <span>Select Date:</span>
+                <input type="date" class="dashboard-picker" id="userDate">
+            </div>
+            <!-- Interactive Time Picker Field -->
+            <div class="detail-item" id="timeRow">
+                <span>Select Time:</span>
+                <input type="time" class="dashboard-picker" id="userTime">
             </div>
         </div>
         
         <button class="lock-btn" id="lockBtn" onclick="lockPlan()">Lock in Details</button>
-        <p id="screenshotText" class="hidden" style="margin-top: 20px; margin-bottom: 0; font-size: 1rem; color: #9cb1c9;">Screenshotted! I'll pick you up then. See you soon!</p>
+        <p id="screenshotText" class="hidden" style="margin-top: 20px; margin-bottom: 0; font-size: 1.1rem; color: #9cb1c9; font-weight: 500;">Screenshotted! I'll pick you up then. See you soon!</p>
     </div>
 
     <script>
@@ -342,17 +357,24 @@
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
         const finalActivity = document.getElementById('finalActivity');
+        const userDate = document.getElementById('userDate');
         const userTime = document.getElementById('userTime');
-        const inputRow = document.getElementById('inputRow');
+        const dateRow = document.getElementById('dateRow');
+        const timeRow = document.getElementById('timeRow');
         const lockBtn = document.getElementById('lockBtn');
         const finalTitle = document.getElementById('finalTitle');
         const finalSubtitle = document.getElementById('finalSubtitle');
         const screenshotText = document.getElementById('screenshotText');
         const finalFlagL = document.getElementById('finalFlagL');
         const finalFlagR = document.getElementById('finalFlagR');
+        const container = document.querySelector('.container');
 
         let transformed = false;
         let returnTimer = null;
+
+        // Auto-set the date input picker's minimum boundary to today
+        const today = new Date().toISOString().split('T')[0];
+        userDate.setAttribute('min', today);
 
         yesBtn.addEventListener('click', () => {
             stage1.classList.add('hidden');
@@ -366,18 +388,38 @@
         }
 
         function lockPlan() {
-            const timeValue = userTime.value.trim();
-            if (timeValue === "") {
-                alert("Please enter a time or day you're free!");
+            const dateValue = userDate.value;
+            const timeValue = userTime.value;
+            
+            if (dateValue === "" || timeValue === "") {
+                alert("Please select both a date and a time for our cruise!");
                 return;
             }
 
-            inputRow.innerHTML = `<span>Scheduled Time:</span><strong>${timeValue}</strong>`;
+            // Convert raw date (YYYY-MM-DD) into a clean, readable format (e.g., June 12, 2026)
+            const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+            const formattedDate = new Date(dateValue).toLocaleDateString('en-US', dateOptions);
+
+            // Convert raw 24h time into an elegant 12-hour format with AM/PM
+            const [hours, minutes] = timeValue.split(':');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedTime = `${hours % 12 || 12}:${minutes} ${ampm}`;
+
+            // Replace interactive field rows with static text output elements
+            dateRow.innerHTML = `<span>Scheduled Date:</span><strong>${formattedDate}</strong>`;
+            timeRow.innerHTML = `<span>Scheduled Time:</span><strong>${formattedTime}</strong>`;
+            
+            // Adjust headings for final success display layout
             finalTitle.innerText = "Destination Locked!";
             finalTitle.style.color = "#2ecc71";
             finalSubtitle.innerText = "It's a Plan 🎉";
             finalFlagL.innerText = "🏁";
             finalFlagR.innerText = "🏁";
+            
+            // UI confirmation effect
+            container.style.boxShadow = "0 25px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(46, 213, 115, 0.2)";
+            container.style.borderColor = "rgba(46, 213, 115, 0.4)";
+
             lockBtn.classList.add('hidden');
             screenshotText.classList.remove('hidden');
         }
